@@ -1,5 +1,4 @@
 
-
 import RPi.GPIO as GPIO
 
 from time import sleep 
@@ -34,7 +33,7 @@ touchSensors = []
 
 p1 = touchPlay(5, filesFromDir('p1'), timeout=20, sustain=True)
 touchSensors.append(p1)
-p2 = touchPlay(6, filesFromDir('p2'), timeout=10, sustain=True, vol=0)
+p2 = touchPlay(6, filesFromDir('p2'), timeout=15, sustain=True, vol=0)
 touchSensors.append(p2)
 p3 = touchPlay(13, filesFromDir('p3'), timeout=15, sustain=True)
 touchSensors.append(p3)
@@ -43,13 +42,13 @@ touchSensors.append(p4)
 p5 = touchPlay(26, filesFromDir('p5'), timeout=20, sustain=True)
 touchSensors.append(p5)
 
-t1 = touchPlay(2, filesFromDir('tt1'), timeout=5, sustain=False)
+t1 = touchPlay(2, filesFromDir('t1'), timeout=5, sustain=False)
 touchSensors.append(t1)
-t2 = touchPlay(3, filesFromDir('tt2'), timeout=5, sustain=False)
+t2 = touchPlay(3, filesFromDir('t3'), timeout=5, sustain=False)
 touchSensors.append(t2)
-t3 = touchPlay(4, filesFromDir('tt3'), timeout=10, sustain=False)
+t3 = touchPlay(4, filesFromDir('t2'), timeout=10, sustain=False)
 touchSensors.append(t3)
-t4 = touchPlay(17, filesFromDir('tt4'), timeout=5, sustain=False)
+t4 = touchPlay(17, filesFromDir('t4'), timeout=5, sustain=False)
 touchSensors.append(t4)
 
 
