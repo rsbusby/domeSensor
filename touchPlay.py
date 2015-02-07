@@ -25,6 +25,7 @@ class touchPlay(object):
             self.volOpt = ''
         self.fileDict = {}
         for f in self.fileList:
+            print f
             self.fileDict[f] = self.getLength(f)
         self.wavFile = self.getFile()
         print self.wavFile   
@@ -38,15 +39,24 @@ class touchPlay(object):
     def getLength(self, soundFile):
         info = commands.getoutput("omxplayer " + str(soundFile) + " --info")
         t =  info.split("Duration:")[-1].split(',')[0]
-        tt = t.split(":")
+        ts = t.split(":")
         print t
-        sec = int(floor(float(tt[-1].lstrip('0'))))
-        minStr =  tt[-2].lstrip('0')
+
+        try:
+            sec = int(floor(float(ts[-1].lstrip('0').split('.')[0])))
+        except:
+            print "failed, length is 10"
+            sec = 10
+        try:
+            minStr = ts[1].lstrip('0')
+        except:
+            # default to zero minutes
+            minStr = 0
         if minStr:
             minVal = int(minStr) 
         else:
             minVal = 0
-        length =  int(sec + minVal * 60)#+ tt[-3]*3600
+        length =  int(sec + minVal * 60)#+ ts[-3]*3600
         return length
     
     def setLength(self):
@@ -79,7 +89,7 @@ class touchPlay(object):
         lines = psOut.split('\n')
         for line in lines:
             pid = line.split()[0].strip()
-            if 'aplay' in line or 'omxplay' in line:
+            if 'aplay' in line or 'omxplay' or 'mplay' in line:
                 #print pid
                 commands.getoutput('kill -9 ' + pid )
         self.playing = False
@@ -117,10 +127,13 @@ class touchPlay(object):
                     else:
                         posOpt = ''
                         if self.pos:
-                            posOpt = " --pos " + str(self.pos)
+                            #posOpt = " --pos " + str(self.pos) + ' '
+                            posOpt = ' -ss ' + str(self.pos) + ' '
+                            print 'posOpt: ' +  posOpt
                         outStr = " > /dev/null 2>&1 "
-                        os.system("omxplayer --no-osd " + self.wavFile + " " + posOpt + self.volOpt + outStr + " &")
-                        print "starting " + self.wavFile + " with omx " #+ str(self.iter)
+                        #os.system("omxplayer --no-osd " + self.wavFile + " " + posOpt + self.volOpt + outStr + " &")
+                        os.system('mplayer ' + posOpt + self.wavFile + ' &')
+                        print "starting " + self.wavFile + " with mplayer " #+ str(self.iter)
                         # adjust pos because omxplayer takes a while to start
                         self.pos = self.pos - 1.5
                     #now = datetime.now()
@@ -135,8 +148,8 @@ class touchPlay(object):
             # If sustaining, but no recent trigger, then stop sound.
             if self.sustain and self.playing:
                 #now = datetime.now()
-                delta = now - self.lastTime
-                #print str(self.pin) + " " + str(self.timeout - delta.total_seconds())
+                delta = now - self.startTime
+                print 'Stoppping....' + str(self.pin) + " " + str(self.timeout - delta.total_seconds())
                 if delta.total_seconds() > self.timeout:
                     self.appendPos(delta)
                     self.killSound()
